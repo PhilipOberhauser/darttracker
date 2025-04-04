@@ -1,8 +1,9 @@
 <?php
 session_start();
-require 'db.php';
+require_once 'db.php'; // Datenbankverbindung
 
-$meldung = '';
+$fehler = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'] ?? '';
     $passwort = $_POST['passwort'] ?? '';
@@ -10,41 +11,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($email && $passwort) {
         $stmt = $pdo->prepare("SELECT * FROM benutzer WHERE email = :email");
         $stmt->execute(['email' => $email]);
-        $benutzer = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($benutzer && password_verify($passwort, $benutzer['passwort'])) {
-            $_SESSION['benutzer_id'] = $benutzer['id'];
-            $_SESSION['benutzer_name'] = $benutzer['name'];
+        if ($user && password_verify($passwort, $user['passwort'])) {
+            $_SESSION['benutzername'] = $user['name']; // <-- Feld "name" aus der Datenbank
             header("Location: startseite.php");
-            exit;
+            exit();
         } else {
-            $meldung = "❌ Falsche E-Mail oder Passwort.";
+            $fehler = "❌ E-Mail oder Passwort ist falsch.";
         }
     } else {
-        $meldung = "⚠️ Bitte alle Felder ausfüllen.";
+        $fehler = "⚠️ Bitte fülle alle Felder aus.";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <title>Login – DartTracker</title>
     <meta charset="UTF-8">
+    <title>Login</title>
 </head>
 <body>
     <h2>Login</h2>
-    <?php if ($meldung): ?>
-        <p><strong><?= htmlspecialchars($meldung) ?></strong></p>
+    <?php if ($fehler): ?>
+        <p style="color:red;"><?php echo $fehler; ?></p>
     <?php endif; ?>
-    <form method="post">
-        <label for="email">E-Mail:</label><br>
-        <input type="email" name="email" required><br><br>
-
-        <label for="passwort">Passwort:</label><br>
-        <input type="password" name="passwort" required><br><br>
-
-        <input type="submit" value="Login">
+    <form method="post" action="">
+        <label>E-Mail: <input type="email" name="email" required></label><br>
+        <label>Passwort: <input type="password" name="passwort" required></label><br>
+        <button type="submit">Login</button>
     </form>
 </body>
 </html>

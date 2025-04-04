@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-$titel = "Dart-Tracker"
-
+$titel = "Dart-Tracker";
 ?>
 
 <!DOCTYPE html>
@@ -24,12 +23,22 @@ $titel = "Dart-Tracker"
             display: flex;
             gap: 10px;
         }
-        .nav-buttons button {
-            padding: 10px 15px;
-            cursor: pointer;
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
-        .dropdown {
-            margin-left: auto;
+        .auth-buttons a {
+            text-decoration: none;
+            padding: 8px 15px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .auth-buttons a:hover {
+            background-color: #0056b3;
         }
         .dropdown-block {
             margin: 20px;
@@ -47,13 +56,11 @@ $titel = "Dart-Tracker"
             const dropdown = document.getElementById("spielmodi");
             const favoriteCheckbox = document.getElementById("favorite-checkbox");
 
-            // Update checkbox state based on the selected option
             dropdown.addEventListener("change", () => {
                 const selectedOption = dropdown.options[dropdown.selectedIndex];
                 favoriteCheckbox.checked = selectedOption.classList.contains("favorite-option");
             });
 
-            // Toggle favorite status when the checkbox is clicked
             favoriteCheckbox.addEventListener("change", () => {
                 const selectedOption = dropdown.options[dropdown.selectedIndex];
                 if (favoriteCheckbox.checked) {
@@ -68,15 +75,24 @@ $titel = "Dart-Tracker"
 <body>
     <header>
         <div class="nav-buttons">
-            <button onclick="location.href='#'">Seite 1</button>
-            <button onclick="location.href='#'">Seite 2</button>
+            <button onclick="location.href='#'">Statistiken</button>
+            <button onclick="location.href='#'">vergangene Spiele</button>
             <button onclick="location.href='#'">Seite 3</button>
             <button onclick="location.href='#'">Seite 4</button>
             <button onclick="location.href='#'">Seite 5</button>
         </div>
+        <div class="auth-buttons">
+            <?php if (isset($_SESSION['benutzername'])): ?>
+                <span><?php echo htmlspecialchars($_SESSION['benutzername']); ?></span>
+                <a href="logout.php">Logout</a>
+            <?php else: ?>
+                <a href="registrierung.php">Registrieren</a>
+                <a href="login.php">Login</a>
+            <?php endif; ?>
+        </div>
     </header>
 
-    <h1> <?php echo $titel ?></h1>
+    <h1><?php echo $titel ?></h1>
 
     <div class="dropdown-block">
         <label for="spielmodi">Spielmodus:</label>
@@ -97,6 +113,5 @@ $titel = "Dart-Tracker"
             <label for="favorite-checkbox">Favorisieren</label>
         </div>
     </div>
-    
 </body>
 </html>

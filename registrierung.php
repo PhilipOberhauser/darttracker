@@ -1,7 +1,9 @@
 <?php
-require 'db.php'; // Externe Datenbankverbindung
+session_start();
+require_once 'db.php';
 
-$meldung = '';
+$meldung = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
@@ -9,22 +11,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($name && $email && $passwort) {
         $passwort_hash = password_hash($passwort, PASSWORD_DEFAULT);
-        $erstellt_am = date('Y-m-d H:i:s');
 
-        $stmt = $pdo->prepare("INSERT INTO benutzer (name, email, passwort, erstellt_am) 
-                               VALUES (:name, :email, :passwort, :erstellt_am)");
+        $stmt = $pdo->prepare("INSERT INTO benutzer (name, email, passwort) VALUES (:name, :email, :passwort)");
+        
         try {
             $stmt->execute([
                 'name' => $name,
                 'email' => $email,
-                'passwort' => $passwort_hash,
-                'erstellt_am' => $erstellt_am
+                'passwort' => $passwort_hash
             ]);
-            // Weiterleitung zum Login
-            header("Location: login.php");
-            exit;
+            $meldung = "✅ Registrierung erfolgreich. Du kannst dich jetzt <a href='login.php'>einloggen</a>.";
         } catch (PDOException $e) {
-            $meldung = "❌ Fehler beim Eintragen: " . $e->getMessage();
+            $meldung = "❌ Fehler: E-Mail-Adresse bereits vergeben?";
         }
     } else {
         $meldung = "⚠️ Bitte alle Felder ausfüllen.";
@@ -33,27 +31,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <title>Registrierung – DartTracker</title>
     <meta charset="UTF-8">
+    <title>Registrierung</title>
 </head>
 <body>
-    <h2>Benutzerkonto erstellen</h2>
+    <h2>Registrierung</h2>
     <?php if ($meldung): ?>
-        <p><strong><?= htmlspecialchars($meldung) ?></strong></p>
+        <p><?php echo $meldung; ?></p>
     <?php endif; ?>
     <form method="post">
-        <label for="name">Name:</label><br>
-        <input type="text" name="name" required><br><br>
-
-        <label for="email">E-Mail:</label><br>
-        <input type="email" name="email" required><br><br>
-
-        <label for="passwort">Passwort:</label><br>
-        <input type="password" name="passwort" required><br><br>
-
-        <input type="submit" value="Registrieren">
+        <label>Name: <input type="text" name="name" required></label><br>
+        <label>E-Mail: <input type="email" name="email" required></label><br>
+        <label>Passwort: <input type="password" name="passwort" required></label><br>
+        <button type="submit">Registrieren</button>
     </form>
 </body>
 </html>
