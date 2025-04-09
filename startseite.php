@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 $titel = "Dart-Tracker";
 ?>
 
@@ -22,6 +21,18 @@ $titel = "Dart-Tracker";
         .nav-buttons {
             display: flex;
             gap: 10px;
+        }
+        .nav-buttons button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .nav-buttons button:hover {
+            background-color: #218838;
         }
         .auth-buttons {
             display: flex;
@@ -75,7 +86,7 @@ $titel = "Dart-Tracker";
 <body>
     <header>
         <div class="nav-buttons">
-            <button onclick="location.href='#'">Statistiken</button>
+            <button onclick="location.href='statistiken.php'">Statistiken</button>
             <button onclick="location.href='#'">vergangene Spiele</button>
             <button onclick="location.href='#'">Seite 3</button>
             <button onclick="location.href='#'">Seite 4</button>
@@ -92,21 +103,14 @@ $titel = "Dart-Tracker";
         </div>
     </header>
 
-    <h1><?php echo $titel ?></h1>
+    <h1 style="text-align: center;"><?php echo $titel ?></h1>
 
     <div class="dropdown-block">
         <label for="spielmodi">Spielmodus:</label>
         <select id="spielmodi" name="spielmodi">
-            <option value="101">101</option>
-            <option value="201">201</option>
-            <option value="301">301</option>
-            <option value="401">401</option>
-            <option value="501">501</option>
-            <option value="601">601</option>
-            <option value="701">701</option>
-            <option value="801">801</option>
-            <option value="901">901</option>
-            <option value="1001">1001</option>
+            <?php foreach ([101, 201, 301, 401, 501, 601, 701, 801, 901, 1001] as $modus): ?>
+                <option value="<?php echo $modus ?>"><?php echo $modus ?></option>
+            <?php endforeach; ?>
         </select>
         <div>
             <input type="checkbox" id="favorite-checkbox">
