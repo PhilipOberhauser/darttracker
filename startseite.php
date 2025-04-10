@@ -87,7 +87,7 @@ $titel = "Dart-Tracker";
     <header>
         <div class="nav-buttons">
             <button onclick="location.href='statistiken.php'">Statistiken</button>
-            <button onclick="location.href='#'">vergangene Spiele</button>
+            <button onclick="location.href='vergangene_spiele.php'">vergangene Spiele</button>
             <button onclick="location.href='#'">Seite 3</button>
             <button onclick="location.href='#'">Seite 4</button>
             <button onclick="location.href='#'">Seite 5</button>
