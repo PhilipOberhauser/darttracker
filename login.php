@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($passwort, $user['passwort'])) {
-            $_SESSION['benutzername'] = $user['name']; // <-- Feld "name" aus der Datenbank
+            $_SESSION['benutzername'] = $user['benutzername']; // <-- Feld "benutzername" aus der Datenbank
             header("Location: startseite.php");
             exit();
         } else {

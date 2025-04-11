@@ -5,18 +5,18 @@ require_once 'db.php';
 $meldung = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'] ?? '';
+    $benutzername = $_POST['benutzername'] ?? '';
     $email = $_POST['email'] ?? '';
     $passwort = $_POST['passwort'] ?? '';
 
-    if ($name && $email && $passwort) {
+    if ($benutzername && $email && $passwort) {
         $passwort_hash = password_hash($passwort, PASSWORD_DEFAULT);
 
-        $stmt = $pdo->prepare("INSERT INTO benutzer (name, email, passwort) VALUES (:name, :email, :passwort)");
+        $stmt = $pdo->prepare("INSERT INTO benutzer (benutzername, email, passwort) VALUES (:benutzername, :email, :passwort)");
         
         try {
             $stmt->execute([
-                'name' => $name,
+                'benutzername' => $benutzername,
                 'email' => $email,
                 'passwort' => $passwort_hash
             ]);
@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p><?php echo $meldung; ?></p>
     <?php endif; ?>
     <form method="post">
-        <label>Name: <input type="text" name="name" required></label><br>
+        <label>Benutzername: <input type="text" name="benutzername" required></label><br>
         <label>E-Mail: <input type="email" name="email" required></label><br>
         <label>Passwort: <input type="password" name="passwort" required></label><br>
         <button type="submit">Registrieren</button>

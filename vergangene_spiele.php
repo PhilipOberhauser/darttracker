@@ -8,7 +8,7 @@ if (!isset($_SESSION['benutzername'])) {
 require_once 'db.php'; // Ensure this file contains the database connection logic
 
 $benutzername = $_SESSION['benutzername']; // Use the correct session variable
-$sql = "SELECT id, datum, punkte FROM spiel WHERE benutzer_id = :benutzer_id"; // Adjust table and column names
+$sql = "SELECT id, datum, punkte FROM spiele WHERE benutzer_id = :benutzer_id"; // Adjust table and column names
 $stmt = $pdo->prepare($sql);
 $stmt->bindParam(':benutzer_id', $benutzername, PDO::PARAM_STR);
 $stmt->execute();
