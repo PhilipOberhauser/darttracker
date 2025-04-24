@@ -18,6 +18,7 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vergangene Spiele</title>
@@ -39,6 +40,9 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     </style>
 </head>
+<header>
+    <img src="darttracker_logo.png" alt="DartTracker Logo">
+</header>
 <body>
     <header>
         <button onclick="location.href='startseite.php'">Zurück zur Startseite</button>

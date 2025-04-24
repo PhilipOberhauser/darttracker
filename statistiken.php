@@ -33,9 +33,13 @@ try {
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <title>Statistiken</title>
 </head>
+<header>
+    <img src="darttracker_logo.png" alt="DartTracker Logo">
+</header>
 <body>
     <h1>Deine Wurf-Statistiken (Gesamt)</h1>
     <p><strong>Durchschnittliche Punkte:</strong> <?= $durchschnitt ?></p>

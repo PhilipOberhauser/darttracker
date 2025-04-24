@@ -1,0 +1,207 @@
+/* Allgemeines Layout */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #252540);
+    color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    transition: all 0.5s ease;
+}
+
+/* Header mit Logo links */
+header {
+    width: 100%;
+    background-color: #12121a;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 40px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+}
+
+header img {
+    height: 100px;
+    max-height: 120px;
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Navigation */
+nav {
+    margin-top: 20px;
+    padding: 15px 25px;
+    background-color: #2e2e44;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 90%;
+    max-width: 1000px;
+    transition: all 0.4s ease;
+}
+
+.nav-links, .auth-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+nav a {
+    color: #61dafb;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #ffffff;
+}
+
+/* Benutzername */
+.user-name {
+    font-weight: bold;
+    color: #ffffff;
+    padding-right: 10px;
+}
+
+/* Toggle-Icon */
+.theme-icon-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #61dafb;
+    transition: transform 0.3s ease;
+}
+.theme-icon-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Container */
+main {
+    margin-top: 30px;
+    padding: 20px;
+    width: 90%;
+    max-width: 1000px;
+    background: #1f1f30;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+    animation: slideUp 1s ease-out;
+    transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* Buttons */
+button, .btn {
+    background-color: #61dafb;
+    color: #12121a;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+button:hover, .btn:hover {
+    background-color: #21a1f1;
+    color: white;
+}
+
+/* Dropdown Block */
+.dropdown-block {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #2b2b3c;
+    border: 1px solid #444;
+    border-radius: 8px;
+}
+
+/* Tabellen */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    border: 1px solid #444;
+    text-align: center;
+}
+
+table th {
+    background-color: #2a2a3d;
+    color: #61dafb;
+}
+
+table tr:nth-child(even) {
+    background-color: #2b2b3c;
+}
+
+/* Animationen */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Light Mode Style */
+body.light-mode {
+    background: #fefefe;
+    color: #1a1a1a;
+}
+
+body.light-mode header {
+    background-color: #f4f4f4;
+}
+
+body.light-mode nav {
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+body.light-mode nav a {
+    color: #0056b3;
+}
+
+body.light-mode nav a:hover {
+    color: #000;
+}
+
+body.light-mode main {
+    background: #ffffff;
+    color: #1a1a1a;
+}
+
+body.light-mode table th {
+    background-color: #e2e2e2;
+    color: #333;
+}
+
+body.light-mode table tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+/* Light Mode Fixes für Dropdown und Texte */
+body.light-mode .dropdown-block label,
+body.light-mode .dropdown-block input,
+body.light-mode .dropdown-block select {
+    color: #ffffff;
+}
+
+body.light-mode .dropdown-block select {
+    background-color: #3a3a50;
+    border: 1px solid #666;
+}

@@ -33,9 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <title>Registrierung</title>
 </head>
+<header>
+    <img src="darttracker_logo.png" alt="DartTracker Logo">
+</header>
 <body>
     <h2>Registrierung</h2>
     <?php if ($meldung): ?>

@@ -29,9 +29,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="de">
 <head>
+<link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
+<header>
+    <img src="darttracker_logo.png" alt="DartTracker Logo">
+</header>
 <body>
     <h2>Login</h2>
     <?php if ($fehler): ?>
