@@ -2,27 +2,38 @@
 session_start();
 require_once 'db.php'; // nutzt $pdo aus deiner db.php
 
-// Prüfen, ob Benutzer eingeloggt ist
 if (!isset($_SESSION['benutzer_id'])) {
     echo "Bitte zuerst einloggen.";
     exit;
 }
 
-$spieler_id = $_SESSION['benutzer_id']; // entspricht der spieler_id in deiner Tabelle
+$spieler_id = $_SESSION['benutzer_id'];
 
 try {
-    // Statistiken gesamt (ohne zeitliche Begrenzung)
-    $stmt = $pdo->prepare("
+    // All-Time Statistik
+    $stmt_all = $pdo->prepare("
         SELECT AVG(punkte) AS durchschnitt, COUNT(*) AS wurfanzahl
         FROM wuerfe
         WHERE spieler_id = :spieler_id
     ");
-    $stmt->bindParam(':spieler_id', $spieler_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $daten = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt_all->execute(['spieler_id' => $spieler_id]);
+    $alltime = $stmt_all->fetch(PDO::FETCH_ASSOC);
 
-    $durchschnitt = $daten['durchschnitt'] !== null ? number_format($daten['durchschnitt'], 2) : "Keine Daten";
-    $wurfanzahl = $daten['wurfanzahl'] ?? 0;
+    $durchschnitt_all = $alltime['durchschnitt'] !== null ? number_format($alltime['durchschnitt'], 2) : "Keine Daten";
+    $anzahl_all = $alltime['wurfanzahl'] ?? 0;
+
+    // Letzte 30 Tage
+    $stmt_30 = $pdo->prepare("
+        SELECT AVG(punkte) AS durchschnitt, COUNT(*) AS wurfanzahl
+        FROM wuerfe
+        WHERE spieler_id = :spieler_id
+        AND datum >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+    ");
+    $stmt_30->execute(['spieler_id' => $spieler_id]);
+    $last30 = $stmt_30->fetch(PDO::FETCH_ASSOC);
+
+    $durchschnitt_30 = $last30['durchschnitt'] !== null ? number_format($last30['durchschnitt'], 2) : "Keine Daten";
+    $anzahl_30 = $last30['wurfanzahl'] ?? 0;
 
 } catch (PDOException $e) {
     echo "Fehler beim Abrufen der Statistiken: " . $e->getMessage();
@@ -41,9 +52,18 @@ try {
     <img src="darttracker_logo.png" alt="DartTracker Logo">
 </header>
 <body>
-    <h1>Deine Wurf-Statistiken (Gesamt)</h1>
-    <p><strong>Durchschnittliche Punkte:</strong> <?= $durchschnitt ?></p>
-    <p><strong>Anzahl der Würfe:</strong> <?= $wurfanzahl ?></p>
-    <p><a href="startseite.php">Zurück zur Startseite</a></p>
+    <h1>Deine Wurf-Statistiken</h1>
+
+    <main>
+        <h2>⏱️ Letzte 30 Tage</h2>
+        <p><strong>Durchschnittliche Punkte:</strong> <?= $durchschnitt_30 ?></p>
+        <p><strong>Anzahl der Würfe:</strong> <?= $anzahl_30 ?></p>
+
+        <h2>📊 Gesamt</h2>
+        <p><strong>Durchschnittliche Punkte:</strong> <?= $durchschnitt_all ?></p>
+        <p><strong>Anzahl der Würfe:</strong> <?= $anzahl_all ?></p>
+
+        <p><a class="btn" href="startseite.php">Zurück zur Startseite</a></p>
+    </main>
 </body>
 </html>
