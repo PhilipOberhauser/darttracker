@@ -78,9 +78,9 @@ if (isset($_GET['reset'])) {
     <main>
         <h2>🎯 Dart Spiel</h2>
 
-        <?php if ($_SESSION['spiel']['benutzer_id']): ?>
+        <?php if ($_SESSION['spiel']['gewinner'] !== null): ?>
             <div class="dropdown-block">
-                <h3>🎉 <?= $_SESSION['spiel']['benutzer_id'] ?> hat das Spiel gewonnen! 🎉</h3>
+                <h3>🎉 <?= $_SESSION['spiel']['gewinner'] ?> hat das Spiel gewonnen! 🎉</h3>
             </div>
         <?php else: ?>
             <p><strong>Aktueller Spieler:</strong> <?= $_SESSION['spiel']['aktuellerSpieler'] ?></p>
