@@ -1,9 +1,9 @@
 <?php
 session_start();
-require_once 'db.php'; // Datenbankverbindung
+require_once 'db.php';
 
-// Punkte-Startwert
-$startScore = 501;
+// Get game mode from URL, default to 501 if not set
+$startScore = isset($_GET['modus']) ? (int)$_GET['modus'] : 501;
 
 // Eingeloggten Benutzer als Spielername
 $benutzername = $_SESSION['benutzername'] ?? 'Spieler 1';
@@ -19,7 +19,8 @@ if (!isset($_SESSION['spiel'])) {
         'aktuellerSpieler' => $benutzername,
         'wurfCount' => 0,
         'gewinner' => null,
-        'startZeit' => time()
+        'startZeit' => time(),
+        'spielmodus' => $startScore // Save the game mode for reference
     ];
 }
 
