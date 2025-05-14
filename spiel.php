@@ -2,8 +2,9 @@
 session_start();
 require_once 'db.php';
 
-// Get game mode from URL, default to 501 if not set
+// Get game mode and out mode from URL
 $startScore = isset($_GET['modus']) ? (int)$_GET['modus'] : 501;
+$outMode = isset($_GET['outmode']) ? $_GET['outmode'] : 'single';
 
 // Eingeloggten Benutzer als Spielername
 $benutzername = $_SESSION['benutzername'] ?? 'Spieler 1';
@@ -20,54 +21,65 @@ if (!isset($_SESSION['spiel'])) {
         'wurfCount' => 0,
         'gewinner' => null,
         'startZeit' => time(),
-        'spielmodus' => $startScore // Save the game mode for reference
+        'spielmodus' => $startScore, // Save the game mode for reference
+        'outMode' => $outMode
     ];
 }
 
 // Verarbeitung der Punkte-Eingabe
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['punkte'])) {
     $punkte = (int) $_POST['punkte'];
+    $wurfTyp = $_POST['wurftyp']; // 'single' or 'double'
     $aktueller = &$_SESSION['spiel']['aktuellerSpieler'];
     $spieler = &$_SESSION['spiel']['spieler'][$aktueller];
 
-    // Punktestand abziehen
-    $spieler -= $punkte;
+    $neuerPunktestand = $spieler - $punkte;
 
-    // Prüfen ob der Spieler gewonnen hat (genau 0)
-    if ($spieler === 0) {
-        $_SESSION['spiel']['gewinner'] = $aktueller;
+    if ($neuerPunktestand === 0) {
+        if ($_SESSION['spiel']['outMode'] === 'double' && $wurfTyp !== 'double') {
+            // Bei Double Out muss mit einem Double beendet werden
+            $neuerPunktestand = $spieler; // Wurf ungültig
+        } else {
+            $_SESSION['spiel']['gewinner'] = $aktueller;
 
-        // Punkte die der Benutzer erzielt hat (501 - übrig)
-        $verbleibendePunkte = $_SESSION['spiel']['spieler'][$benutzername];
-        $erspieltePunkte = $startScore - $verbleibendePunkte;
+            // Punkte die der Benutzer erzielt hat
+            $verbleibendePunkte = $_SESSION['spiel']['spieler'][$benutzername];
+            $erspieltePunkte = $startScore - $verbleibendePunkte;
 
-        // In die Tabelle "spiele" einfügen (benutzer_id, datum, punkte)
-        if ($benutzer_id !== null) {
-            $stmt = $conn->prepare("INSERT INTO spiele (benutzer_id, datum, punkte) VALUES (?, NOW(), ?)");
-            $stmt->bind_param("ii", $benutzer_id, $erspieltePunkte);
-            $stmt->execute();
+            // In die Tabelle "spiele" einfügen mit PDO
+            if ($benutzer_id !== null) {
+                $stmt = $pdo->prepare("INSERT INTO spiele (benutzer_id, datum, punkte) VALUES (:benutzer_id, NOW(), :punkte)");
+                $stmt->execute([
+                    ':benutzer_id' => $benutzer_id,
+                    ':punkte' => $erspieltePunkte
+                ]);
+            }
         }
-    } elseif ($spieler < 0) {
-        // Bei Unterpunkten wird der Wurf ignoriert (zurücksetzen auf vorherigen Stand)
-        $spieler += $punkte;
-    } else {
-        $_SESSION['spiel']['wurfCount']++;
-        // Spielerwechsel nach 3 Würfen
-        if ($_SESSION['spiel']['wurfCount'] >= 3) {
-            $_SESSION['spiel']['aktuellerSpieler'] = $_SESSION['spiel']['aktuellerSpieler'] === $benutzername ? 'Spieler 2' : $benutzername;
-            $_SESSION['spiel']['wurfCount'] = 0;
-        }
+    }
+
+    if ($neuerPunktestand < 0) {
+        $neuerPunktestand = $spieler; // Wurf ungültig
+    }
+
+    $spieler = $neuerPunktestand;
+
+    $_SESSION['spiel']['wurfCount']++;
+    // Spielerwechsel nach 3 Würfen
+    if ($_SESSION['spiel']['wurfCount'] >= 3) {
+        $_SESSION['spiel']['aktuellerSpieler'] = $_SESSION['spiel']['aktuellerSpieler'] === $benutzername ? 'Spieler 2' : $benutzername;
+        $_SESSION['spiel']['wurfCount'] = 0;
     }
 }
 
-// Reset
+// Reset - preserve game mode and out mode
 if (isset($_GET['reset'])) {
+    $currentModus = $_SESSION['spiel']['spielmodus'];
+    $currentOutMode = $_SESSION['spiel']['outMode'];
     unset($_SESSION['spiel']);
-    header("Location: spiel.php");
+    header("Location: spiel.php?modus=$currentModus&outmode=$currentOutMode");
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -78,10 +90,13 @@ if (isset($_GET['reset'])) {
 <body>
     <main>
         <h2>🎯 Dart Spiel</h2>
-
-        <?php if ($_SESSION['spiel']['gewinner'] !== null): ?>
+        <?php if (isset($_SESSION['spiel']['gewinner']) && $_SESSION['spiel']['gewinner'] !== null): ?>
             <div class="dropdown-block">
-                <h3>🎉 <?= $_SESSION['spiel']['gewinner'] ?> hat das Spiel gewonnen! 🎉</h3>
+                <h3>🎉 <?= htmlspecialchars($_SESSION['spiel']['gewinner']) ?> hat das Spiel gewonnen! 🎉</h3>
+                <div style="margin-top: 20px;">
+                    <a href="spiel.php?reset=true&modus=<?= $_SESSION['spiel']['spielmodus'] ?>&outmode=<?= $_SESSION['spiel']['outMode'] ?>" class="btn">🔄 Neues Spiel starten</a>
+                    <a href="startseite.php" class="btn">🏠 Zurück zur Startseite</a>
+                </div>
             </div>
         <?php else: ?>
             <p><strong>Aktueller Spieler:</strong> <?= $_SESSION['spiel']['aktuellerSpieler'] ?></p>
@@ -90,25 +105,26 @@ if (isset($_GET['reset'])) {
                 <form method="post">
                     <label for="punkte">Punkte:</label>
                     <select name="punkte" id="punkte" required>
-                        <option value="0">Miss</option>
+                        <option value="0" data-type="single">Miss</option>
                         <optgroup label="Single">
                             <?php for ($i = 1; $i <= 20; $i++): ?>
-                                <option value="<?= $i ?>">S<?= $i ?></option>
+                                <option value="<?= $i ?>" data-type="single">S<?= $i ?></option>
                             <?php endfor; ?>
                         </optgroup>
                         <optgroup label="Double">
                             <?php for ($i = 1; $i <= 20; $i++): ?>
-                                <option value="<?= $i * 2 ?>">D<?= $i ?></option>
+                                <option value="<?= $i * 2 ?>" data-type="double">D<?= $i ?></option>
                             <?php endfor; ?>
                         </optgroup>
                         <optgroup label="Triple">
                             <?php for ($i = 1; $i <= 20; $i++): ?>
-                                <option value="<?= $i * 3 ?>">T<?= $i ?></option>
+                                <option value="<?= $i * 3 ?>" data-type="triple">T<?= $i ?></option>
                             <?php endfor; ?>
                         </optgroup>
-                        <option value="25">Bull (25)</option>
-                        <option value="50">Bullseye (50)</option>
+                        <option value="25" data-type="single">Bull (25)</option>
+                        <option value="50" data-type="double">Bullseye (50)</option>
                     </select>
+                    <input type="hidden" name="wurftyp" id="wurftyp" value="single">
                     <button type="submit">Wurf eintragen</button>
                 </form>
             </div>
@@ -131,11 +147,17 @@ if (isset($_GET['reset'])) {
                 <?php endforeach; ?>
             </tbody>
         </table>
-
         <div style="margin-top: 20px;">
-            <a href="spiel.php?reset=true" class="btn">🔄 Neues Spiel starten</a>
+            <a href="spiel.php?reset=true&modus=<?= $_SESSION['spiel']['spielmodus'] ?>&outmode=<?= $_SESSION['spiel']['outMode'] ?>" class="btn">🔄 Neues Spiel starten</a>
             <a href="startseite.php" class="btn">🏠 Zurück zur Startseite</a>
         </div>
     </main>
+
+    <script>
+        document.getElementById('punkte').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            document.getElementById('wurftyp').value = selectedOption.dataset.type;
+        });
+    </script>
 </body>
 </html>

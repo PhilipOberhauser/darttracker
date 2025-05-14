@@ -22,17 +22,21 @@ $titel = "Dart-Tracker";
 
         // New code for handling game mode selection
         const dropdown = document.getElementById("spielmodi");
+        const outmodus = document.getElementById("outmodus");
         const spielStartenLink = document.getElementById("spiel-starten");
         
-        // Update link when dropdown changes
-        dropdown?.addEventListener("change", () => {
+        function updateGameLink() {
             const selectedValue = dropdown.value;
-            spielStartenLink.href = `spiel.php?modus=${selectedValue}`;
-        });
-
-        // Set initial link value
+            const selectedOutMode = outmodus.value;
+            spielStartenLink.href = `spiel.php?modus=${selectedValue}&outmode=${selectedOutMode}`;
+        }
+        
+        dropdown?.addEventListener("change", updateGameLink);
+        outmodus?.addEventListener("change", updateGameLink);
+        
+        // Set initial link
         if (dropdown && spielStartenLink) {
-            spielStartenLink.href = `spiel.php?modus=${dropdown.value}`;
+            updateGameLink();
         }
 
         // Existing favorite checkbox code
@@ -101,6 +105,13 @@ $titel = "Dart-Tracker";
                     <option value="<?php echo $value ?>"><?php echo $display ?></option>
                 <?php endforeach; ?>
             </select>
+
+            <label for="outmodus">Out-Modus:</label>
+            <select id="outmodus" name="outmodus">
+                <option value="single">Single Out</option>
+                <option value="double">Double Out</option>
+            </select>
+
             <div>
                 <input type="checkbox" id="favorite-checkbox">
                 <label for="favorite-checkbox">Favorisieren</label>
