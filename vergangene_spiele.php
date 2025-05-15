@@ -5,12 +5,16 @@ if (!isset($_SESSION['benutzername'])) {
     exit();
 }
 
-require_once 'db.php'; // Ensure this file contains the database connection logic
+require_once 'db.php';
 
-$benutzername = $_SESSION['benutzername']; // Use the correct session variable
-$sql = "SELECT id, datum, punkte FROM spiele WHERE benutzer_id = :benutzer_id"; // Adjust table and column names
+$benutzer_id = $_SESSION['benutzer_id'] ?? null; // Get the user ID from session
+if ($benutzer_id === null) {
+    die("Benutzer-ID nicht gefunden");
+}
+
+$sql = "SELECT spiele_id, datum, punkte FROM spiele WHERE id = :id";
 $stmt = $pdo->prepare($sql);
-$stmt->bindParam(':benutzer_id', $benutzername, PDO::PARAM_STR);
+$stmt->bindParam(':id', $benutzer_id, PDO::PARAM_INT);
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -62,12 +66,12 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <tbody>
                 <?php foreach ($result as $row): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['spiele_id']); ?></td>
                         <td><?php echo htmlspecialchars($row['datum']); ?></td>
                         <td><?php echo htmlspecialchars($row['punkte']); ?></td>
                     </tr>
                 <?php endforeach; ?>
-            </tbody>
+            </tbody>#
         </table>
     <?php else: ?>
         <p>Keine vergangenen Spiele gefunden.</p>

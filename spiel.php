@@ -21,7 +21,7 @@ if (!isset($_SESSION['spiel'])) {
         'wurfCount' => 0,
         'gewinner' => null,
         'startZeit' => time(),
-        'spielmodus' => $startScore, // Save the game mode for reference
+        'spielmodus' => $startScore,
         'outMode' => $outMode
     ];
 }
@@ -29,7 +29,7 @@ if (!isset($_SESSION['spiel'])) {
 // Verarbeitung der Punkte-Eingabe
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['punkte'])) {
     $punkte = (int) $_POST['punkte'];
-    $wurfTyp = $_POST['wurftyp']; // 'single' or 'double'
+    $wurfTyp = $_POST['wurftyp'];
     $aktueller = &$_SESSION['spiel']['aktuellerSpieler'];
     $spieler = &$_SESSION['spiel']['spieler'][$aktueller];
 
@@ -43,16 +43,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['punkte'])) {
             $_SESSION['spiel']['gewinner'] = $aktueller;
 
             // Punkte die der Benutzer erzielt hat
-            $verbleibendePunkte = $_SESSION['spiel']['spieler'][$benutzername];
-            $erspieltePunkte = $startScore - $verbleibendePunkte;
-
-            // In die Tabelle "spiele" einfügen mit PDO
-            if ($benutzer_id !== null) {
-                $stmt = $pdo->prepare("INSERT INTO spiele (benutzer_id, datum, punkte) VALUES (:benutzer_id, NOW(), :punkte)");
-                $stmt->execute([
-                    ':benutzer_id' => $benutzer_id,
-                    ':punkte' => $erspieltePunkte
-                ]);
+            if ($aktueller === $benutzername) {
+                try {
+                    // Das Startspiel minus die Würfe die benötigt wurden
+                    $spielzuege = $_SESSION['spiel']['wurfCount'] + 
+                                (floor($_SESSION['spiel']['wurfCount'] / 3) * 3);
+                    
+                    $stmt = $pdo->prepare("INSERT INTO spiele (id, datum, punkte) VALUES (:id, NOW(), :punkte)");
+                    $stmt->execute([
+                        ':id' => $benutzer_id,
+                        ':punkte' => $spielzuege
+                    ]);
+                } catch (PDOException $e) {
+                    error_log("Datenbankfehler: " . $e->getMessage());
+                }
             }
         }
     }
