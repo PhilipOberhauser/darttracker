@@ -12,7 +12,7 @@ $spieler_id = $_SESSION['benutzer_id'];
 try {
     // All-Time Statistik
     $stmt_all = $pdo->prepare("
-        SELECT AVG(punkte) AS durchschnitt, COUNT(*) AS wurfanzahl
+        SELECT AVG(wurfwert) AS durchschnitt, COUNT(*) AS wurfanzahl
         FROM wuerfe
         WHERE benutzer_id = :spieler_id
     ");
@@ -24,10 +24,9 @@ try {
 
     // Letzte 30 Tage
     $stmt_30 = $pdo->prepare("
-        SELECT AVG(punkte) AS durchschnitt, COUNT(*) AS wurfanzahl
+        SELECT AVG(wurfwert) AS durchschnitt, COUNT(*) AS wurfanzahl
         FROM wuerfe
         WHERE benutzer_id = :spieler_id
-        AND wurfzeit >= DATE_SUB(NOW(), INTERVAL 30 DAY)
     ");
     $stmt_30->execute(['spieler_id' => $spieler_id]);
     $last30 = $stmt_30->fetch(PDO::FETCH_ASSOC);

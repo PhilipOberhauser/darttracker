@@ -33,6 +33,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['punkte'])) {
     $aktueller = &$_SESSION['spiel']['aktuellerSpieler'];
     $spieler = &$_SESSION['spiel']['spieler'][$aktueller];
 
+    // Speichere jeden Wurf in der Datenbank
+    if ($aktueller === $benutzername) { // Nur Würfe des eingeloggten Spielers speichern
+        try {
+            $stmt = $pdo->prepare("INSERT INTO wuerfe (wurf_id, benutzer_id, spiel_id, wurfwert) VALUES (NULL, :benutzer_id, :spiel_id, :wurfwert)");
+            $stmt->execute([
+                ':benutzer_id' => $benutzer_id,
+                ':spiel_id' => $_SESSION['spiel']['current_game_id'] ?? 0,
+                ':wurfwert' => $punkte
+            ]);
+        } catch (PDOException $e) {
+            error_log("Fehler beim Speichern des Wurfs: " . $e->getMessage());
+        }
+    }
+
     $neuerPunktestand = $spieler - $punkte;
 
     if ($neuerPunktestand === 0) {
