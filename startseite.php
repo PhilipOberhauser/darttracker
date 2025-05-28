@@ -10,17 +10,9 @@ $titel = "Dart-Tracker";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title><?php echo $titel ?></title>
-    <script>
+    <title><?php echo $titel ?></title>    <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // Existing theme toggle code
-        const toggleBtn = document.getElementById("theme-toggle");
-        toggleBtn?.addEventListener("click", () => {
-            document.body.classList.toggle("light-mode");
-            toggleBtn.innerText = document.body.classList.contains("light-mode") ? "🌞" : "🌙";
-        });
-
-        // New code for handling game mode selection
+        // Code for handling game mode selection
         const dropdown = document.getElementById("spielmodi");
         const outmodus = document.getElementById("outmodus");
         const spielStartenLink = document.getElementById("spiel-starten");
@@ -58,6 +50,7 @@ $titel = "Dart-Tracker";
 </head>
 
 <body>
+    <?php require_once 'header.php'; ?>
     <header>
         <img src="darttracker_logo.png" alt="DartTracker Logo">
     </header>
@@ -69,14 +62,12 @@ $titel = "Dart-Tracker";
             
         </div>
         <div class="auth-section">
-            <?php if (isset($_SESSION['benutzername'])): ?>
-            <span class="user-name"><?php echo htmlspecialchars($_SESSION['benutzername']); ?></span>
+            <?php if (isset($_SESSION['benutzername'])): ?>            <span class="user-name"><?php echo htmlspecialchars($_SESSION['benutzername']); ?></span>
             <a href="logout.php" class="btn">Logout</a>
             <?php else: ?>
             <a href="registrierung.php" class="btn">Registrieren</a>
             <a href="login.php" class="btn">Login</a>
             <?php endif; ?>
-            <button id="theme-toggle" class="theme-icon-btn">🌙</button>
         </div>
     </nav>
 

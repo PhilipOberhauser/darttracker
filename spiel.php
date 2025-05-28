@@ -106,6 +106,7 @@ if (isset($_GET['reset'])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <?php require_once 'header.php'; ?>
     <main>
         <h2>🎯 Dart Spiel</h2>
         <?php if (isset($_SESSION['spiel']['gewinner']) && $_SESSION['spiel']['gewinner'] !== null): ?>

@@ -158,38 +158,46 @@ table tr:nth-child(even) {
 }
 
 /* Light Mode Style */
+:root.light-mode,
 body.light-mode {
     background: #fefefe;
     color: #1a1a1a;
 }
 
+:root.light-mode header,
 body.light-mode header {
     background-color: #f4f4f4;
 }
 
+:root.light-mode nav,
 body.light-mode nav {
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+:root.light-mode nav a,
 body.light-mode nav a {
     color: #0056b3;
 }
 
+:root.light-mode nav a:hover,
 body.light-mode nav a:hover {
     color: #000;
 }
 
+:root.light-mode main,
 body.light-mode main {
     background: #ffffff;
     color: #1a1a1a;
 }
 
+:root.light-mode table th,
 body.light-mode table th {
     background-color: #e2e2e2;
     color: #333;
 }
 
+:root.light-mode table tr:nth-child(even),
 body.light-mode table tr:nth-child(even) {
     background-color: #f0f0f0;
 }
@@ -204,4 +212,31 @@ body.light-mode .dropdown-block select {
 body.light-mode .dropdown-block select {
     background-color: #3a3a50;
     border: 1px solid #666;
+}
+
+/* Theme Toggle Button */
+#theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    font-size: 1.5em;
+    z-index: 1000;
+}
+
+/* Hintergrundfarbe für den Body im Dunkelmodus */
+body {
+    background-color: #1a1a1a;
+    color: #ffffff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hintergrundfarbe für den Body im Hellmodus */
+body.light-mode {
+    background-color: #ffffff;
+    color: #000000;
 }

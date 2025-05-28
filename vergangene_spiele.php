@@ -26,35 +26,16 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vergangene Spiele</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
 </head>
-<header>
-    <img src="darttracker_logo.png" alt="DartTracker Logo">
-</header>
-<body>
-    <header>
-        <button onclick="location.href='startseite.php'">Zurück zur Startseite</button>
-    </header>
+<body>    <?php require_once 'header.php'; ?>
+
+    <div class="page-nav">
+        <button onclick="location.href='startseite.php'" class="btn">Zurück zur Startseite</button>
+    </div>
 
     <h1>Vergangene Spiele</h1>
 

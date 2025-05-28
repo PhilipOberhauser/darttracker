@@ -47,10 +47,8 @@ try {
     <meta charset="UTF-8">
     <title>Statistiken</title>
 </head>
-<header>
-    <img src="darttracker_logo.png" alt="DartTracker Logo">
-</header>
 <body>
+    <?php require_once 'header.php'; ?>
     <h1>Deine Wurf-Statistiken</h1>
 
     <main>
