@@ -13,10 +13,10 @@ if ($benutzer_id === null) {
 }
 
 // Updated SQL query with correct column names
-$sql = "SELECT spiel_id, spiele.id as benutzer_id, datum, punkte 
+$sql = "SELECT spiele.id, spiele.id as benutzer_id, datum 
         FROM spiele 
         WHERE spiele.id = :benutzer_id 
-        ORDER BY spiel_id DESC";
+        ORDER BY spiele.id DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->bindParam(':benutzer_id', $benutzer_id, PDO::PARAM_INT);
 $stmt->execute();
@@ -65,16 +65,14 @@ $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <th>Spiel-ID</th>
                     <th>Benutzer-ID</th>
                     <th>Datum</th>
-                    <th>Punkte</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($result as $row): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['spiel_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['id']); ?></td>
                         <td><?php echo htmlspecialchars($row['benutzer_id']); ?></td>
                         <td><?php echo htmlspecialchars($row['datum']); ?></td>
-                        <td><?php echo htmlspecialchars($row['punkte']); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>#

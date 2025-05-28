@@ -66,9 +66,7 @@ $titel = "Dart-Tracker";
         <div class="nav-links">
             <a href="statistiken.php">Statistiken</a>
             <a href="vergangene_spiele.php">Vergangene Spiele</a>
-            <a href="#">Seite 3</a>
-            <a href="#">Seite 4</a>
-            <a href="#">Seite 5</a>
+            
         </div>
         <div class="auth-section">
             <?php if (isset($_SESSION['benutzername'])): ?>
